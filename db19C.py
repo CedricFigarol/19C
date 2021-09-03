@@ -14,6 +14,7 @@ class DataBaseManager:
         self.types = []
         self.auteurs = []
         self.references_19C = []
+        self.presentation_19C = []
         self.con = self.create_connection()
         self.build_tables(self.con)
         self.close_connection()
@@ -62,21 +63,34 @@ class DataBaseManager:
         self.types = tuple(cursor.fetchall())
         cursor.execute("SELECT * FROM cfi_auteurs")
         self.auteurs = tuple(cursor.fetchall())
-        cursor.execute("SELECT * FROM references_19C")
+        cursor.execute("SELECT * FROM cfi_19C_refs")
         self.references_19C = tuple(cursor.fetchall())
+        self.refresh_presentation_19C()
 
     def close_connection(self):
         self.con.close()
 
+    def refresh_presentation_19C(self):
+        connection = self.create_connection()
+        cursor = connection.cursor()
+        cursor.execute('''
+                        SELECT ref_code, ref_titre, ref_creation_date, cfi_auteurs.auteur_email, ref_actif, ref_commentaire 
+                        FROM cfi_19C_refs
+                        INNER JOIN cfi_auteurs
+                        ON cfi_19C_refs.ref_auteur = cfi_auteurs.id_auteur''')
+        self.presentation_19C = tuple(cursor.fetchall())
+        self.close_connection()
+
     def push_new_19C(self, new_19C_tuple):
         connection = self.create_connection()
         cursor = connection.cursor()
-        cursor.execute(
-            f"INSERT INTO references_19C(ref_19C_code, ref_19C_titre_doc, ref_19C_creation_date, ref_19C_auteur, ref_19C_ref_active, ref_19C_commentaire) "
-            f"VALUES (?, ?, ?, ?, ?, ?)", new_19C_tuple)
-        cursor.execute("SELECT * FROM references_19C")
+        cursor.execute('''
+                        INSERT INTO cfi_19C_refs(ref_code, ref_titre, ref_creation_date, ref_auteur, ref_actif, ref_commentaire)
+                        VALUES (?, ?, ?, ?, ?, ?)''', new_19C_tuple)
+        cursor.execute("SELECT * FROM cfi_19C_refs")
         self.references_19C = tuple(cursor.fetchall())
         connection.commit()
+        self.refresh_presentation_19C()
         self.close_connection()
 
     def push_new_auteur(self, new_auteur_tuple):
@@ -89,4 +103,7 @@ class DataBaseManager:
         self.auteurs = tuple(cursor.fetchall())
         connection.commit()
         self.close_connection()
+
+    def build_19C_summary_table(self):
+        pass
 
