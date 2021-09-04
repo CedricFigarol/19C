@@ -103,7 +103,3 @@ class DataBaseManager:
         self.auteurs = tuple(cursor.fetchall())
         connection.commit()
         self.close_connection()
-
-    def build_19C_summary_table(self):
-        pass
-

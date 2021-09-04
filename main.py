@@ -4,8 +4,10 @@ Outil codé pour les IPs AKKA des plateaux EDF DIPDE
 Cédric Figarol - cedric.figarol@akka.eu - Akka_2021
 """
 
+VERSION = '1.0'
+
 from ui19C import Application19C
 
 if __name__ == '__main__':
-    myUI = Application19C()
+    myUI = Application19C(VERSION)
     myUI.mainloop()
