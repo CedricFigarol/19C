@@ -1,12 +1,17 @@
+"""
+Class managing the GUI of the application. Directly used by main.py.
+"""
+
 import tkinter as tk
 import tkinter.ttk as ttk
-from tkinter import messagebox
-from db19C import DataBaseManager
-from my19C import My19C, Sub19C
-from user19C import UserManager
 import datetime
 import csv
 import pyperclip
+from tkinter import messagebox
+from databaseManager import DataBaseManager
+from my19C import My19C, Sub19C
+from userManager import UserManager
+
 
 COLOR1 = '#A3CDD9'
 COLOR2 = '#FFFCE6'
@@ -17,6 +22,7 @@ FAVICON = "favicon.ico"
 
 
 class Application19C(tk.Tk):
+
     def __init__(self, VERSION):
         tk.Tk.__init__(self)
         self.db = DataBaseManager()
@@ -150,11 +156,14 @@ class Application19C(tk.Tk):
                                        f"{self.my19C.chrono}.\n\nConfirmez-vous l'exactitude de vos données d'entrée ?"
             confBox = messagebox.askquestion('Confirmation avant enregistrement', confirmation_message)
             if confBox == 'yes':
-                self.db.push_new_19C(db_new_19C_entry_tuple)
-                print(f"Le 19C {db_new_19C_entry_tuple} a été enregistré dans la base de donnée.")
-                pyperclip.copy(self.my19C.reference)
-                messagebox.showinfo(title='Attention', message='Nouvelle entrée crée dans la base de donnée.\n\n'
-                                            'Hint : la référence du nouveau 19C est dans le presse-papier. Ctrl+V pour coller la référence.')
+                new_19C_pushed = self.db.push_new_19C(db_new_19C_entry_tuple)
+                if new_19C_pushed:
+                    print(f"Le 19C {db_new_19C_entry_tuple} a été enregistré dans la base de donnée.")
+                    pyperclip.copy(self.my19C.reference)
+                    messagebox.showinfo(title='Attention', message='Nouvelle entrée crée dans la base de donnée.\n\n'
+                                                'Hint : la référence du nouveau 19C est dans le presse-papier. Ctrl+V pour coller la référence.')
+                else:
+                    messagebox.showinfo(title='Info', message='Database occupée, Essayez à nouveau.')
 
     def open_ref_table_window(self):
         refs_win = tk.Toplevel(self)
@@ -205,9 +214,13 @@ class Application19C(tk.Tk):
             if new_user.nom == '' or new_user.prenom == '' or new_user.email == '':
                 messagebox.showerror(title='Attention', message='Complétez tous les champs.')
             else:
-                self.db.push_new_auteur(new_user.user_tuple)
-                add_user_win.destroy()
-                messagebox.showinfo(title='Info', message='Utilisateur ajouté.')
+                new_user_pushed = self.db.push_new_auteur(new_user.user_tuple)
+                if new_user_pushed:
+                    self.set_combobox_widgets()
+                    add_user_win.destroy()
+                    messagebox.showinfo(title='Info', message='Utilisateur ajouté.')
+                else:
+                    messagebox.showinfo(title='Info', message='Database occupée, Essayez à nouveau.')
 
         labels_font = ("Arial", 15, 'bold')
         add_user_win = tk.Toplevel(self)
@@ -251,5 +264,3 @@ class Application19C(tk.Tk):
                                                       f'Outil codé pour les IPs AKKA des plateaux EDF DIPDE\n\n'
                                                       f'Pour toute question, veuillez contacter :\n'
                                                       f'Cédric Figarol - cedric.figarol@akka.eu')
-
-
