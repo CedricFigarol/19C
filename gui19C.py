@@ -13,11 +13,11 @@ from my19C import My19C, Sub19C
 from userManager import UserManager
 
 
-COLOR1 = '#A3CDD9'
-COLOR2 = '#FFFCE6'
-COLOR3 = '#F2CC39'
-COLOR4 = '#506AD4'
-COLOR5 = '#C2B8AD'
+COLOR1 = '#333333'  # Background color #A3CDD9
+COLOR2 = '#F2F2F2'  # Font color
+COLOR3 = '#F2CC39'  # Not used
+COLOR4 = '#506AD4'  # Not used
+COLOR5 = '#C2B8AD'  # Not used
 FAVICON = "favicon.ico"
 
 
