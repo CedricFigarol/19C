@@ -30,7 +30,7 @@ class Application19C(tk.Tk):
                            ['-', '-', '-'], ['-', '-', '-'], ['-', '-', '-'])
         # Main window configuration
         self.title("Mon 19C")
-        self.minsize(width=700, height=480)
+        self.minsize(width=900, height=530)
         self.config(bg=COLOR1, padx=30, pady=30)
         self.iconbitmap(FAVICON)
         self.set_label_widgets()
