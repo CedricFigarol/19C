@@ -248,7 +248,7 @@ class Application19C(tk.Tk):
         export_date = str(datetime.datetime.utcnow().now())[:19].replace(":", "_")
         file_path = f'.\exports\export_{export_date}.csv'
         try:
-            with open(file_path, 'w+') as csv_file:
+            with open(file_path, 'w+', newline='') as csv_file:
                 csv_content_writer = csv.writer(csv_file)
                 for row in self.db.presentation_19C:
                     csv_content_writer.writerow(row)
